@@ -81,7 +81,7 @@ namespace Pikmi.API.Services.Implementations
 
             var newRefreshToken = Guid.NewGuid().ToString(); 
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_config.GetValue<int>("JwtSettings:AccessTokenExpiryInMinutes"));
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_config.GetValue<int>("JwtSettings:RefreshTokenExpiryInDays"));
             await _userManager.UpdateAsync(user);
 
             return new LoginResponseDto
@@ -121,7 +121,7 @@ namespace Pikmi.API.Services.Implementations
 
             var newRefreshToken = Guid.NewGuid().ToString();
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_config.GetValue<int>("JwtSettings:AccessTokenExpiryInMinutes"));
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_config.GetValue<int>("JwtSettings:RefreshTokenExpiryInDays"));
             await _userManager.UpdateAsync(user);
 
             return new LoginResponseDto

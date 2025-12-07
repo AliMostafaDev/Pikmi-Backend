@@ -43,6 +43,7 @@ namespace Pikmi.API.Controllers
 
         [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<LoginResponseDto>> RefreshToken(string refreshToken)
         {
@@ -65,6 +66,7 @@ namespace Pikmi.API.Controllers
 
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpPost("resend-confirmation")]
         public async Task<ActionResult<string>> ResendConfirmationEmail(string email)
         {
