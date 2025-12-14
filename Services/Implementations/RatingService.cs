@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Pikmi.API.Entities;
 using Pikmi.API.Repositories.Interfaces;
+using Pikmi.API.Services.Interfaces;
 
 namespace Pikmi.API.Services.Implementations
 {
-    public class RatingService
+    public class RatingService : IRatingService
     {
         private readonly IRatingRepository _ratingRepository;
         private readonly UserManager<ApplicationUser> _userManager;

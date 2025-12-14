@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pikmi.API.Data;
 using Pikmi.API.Entities;
+using Pikmi.API.Repositories.Interfaces;
 
 namespace Pikmi.API.Repositories.Implementations
 {
-    public class RatingRepository
+    public class RatingRepository : IRatingRepository
     {
         private readonly ApplicationDbContext _context;
 

@@ -6,6 +6,8 @@ using Pikmi.API.Data;
 using Pikmi.API.Entities;
 using Pikmi.API.Helpers;
 using Pikmi.API.Mapping;
+using Pikmi.API.Repositories.Implementations;
+using Pikmi.API.Repositories.Interfaces;
 using Pikmi.API.Services.Implementations;
 using Pikmi.API.Services.Interfaces;
 using System.Text;
@@ -25,10 +27,25 @@ builder.Services.AddCors(options =>
 });
 
 
-// Add services to the container.
+
+// ============================================
+// REGISTER REPOSITORIES
+// ============================================
+builder.Services.AddScoped<IRideRepository, RideRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+
+// ============================================
+// REGISTER SERVICES
+// ============================================
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, MailjetApiEmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRideService, RideService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

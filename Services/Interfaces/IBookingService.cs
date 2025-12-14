@@ -2,7 +2,7 @@
 
 namespace Pikmi.API.Services.Interfaces
 {
-    public interface IBookingService
+    public interface IBookingService 
     {
         Task<Booking?> GetBookingByIdAsync(int bookingId);
         Task<IEnumerable<Booking>> GetAllBookingsAsync();

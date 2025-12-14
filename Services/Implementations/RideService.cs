@@ -1,9 +1,10 @@
 ﻿using Pikmi.API.Entities;
 using Pikmi.API.Repositories.Interfaces;
+using Pikmi.API.Services.Interfaces;
 
 namespace Pikmi.API.Services.Implementations
 {
-    public class RideService
+    public class RideService : IRideService
     {
         private readonly IRideRepository _rideRepository;
 

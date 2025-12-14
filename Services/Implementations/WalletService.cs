@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Pikmi.API.Entities;
+using Pikmi.API.Services.Interfaces;
 
 namespace Pikmi.API.Services.Implementations
 {
-    public class WalletService
+    public class WalletService : IWalletService
     {
         private readonly UserManager<ApplicationUser> _userManager;
 

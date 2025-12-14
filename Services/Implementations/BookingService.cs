@@ -4,7 +4,7 @@ using Pikmi.API.Services.Interfaces;
 
 namespace Pikmi.API.Services.Implementations
 {
-    public class BookingService
+    public class BookingService : IBookingService
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IRideRepository _rideRepository;

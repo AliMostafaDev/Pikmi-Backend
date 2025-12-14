@@ -5,7 +5,7 @@ using Pikmi.API.Repositories.Interfaces;
 
 namespace Pikmi.API.Repositories.Implementations
 {
-    public class RideRepository : BookingRepository
+    public class RideRepository : IRideRepository
     {
         private readonly ApplicationDbContext _context;
 
