@@ -30,12 +30,13 @@ namespace Pikmi.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AverageRating = table.Column<double>(type: "float", nullable: false),
                     IsDocumentVerified = table.Column<bool>(type: "bit", nullable: false),
+                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -166,6 +167,98 @@ namespace Pikmi.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Rides",
+                columns: table => new
+                {
+                    RideId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FromLocation = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ToLocation = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SeatsAvailable = table.Column<int>(type: "int", nullable: false),
+                    CostInCoins = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rides", x => x.RideId);
+                    table.ForeignKey(
+                        name: "FK_Rides_AspNetUsers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    BookingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RideId = table.Column<int>(type: "int", nullable: false),
+                    PassengerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SeatsBooked = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CoinsUsed = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BookedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
+                    table.ForeignKey(
+                        name: "FK_Bookings_AspNetUsers_PassengerId",
+                        column: x => x.PassengerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Rides_RideId",
+                        column: x => x.RideId,
+                        principalTable: "Rides",
+                        principalColumn: "RideId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ratings",
+                columns: table => new
+                {
+                    RatingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RideId = table.Column<int>(type: "int", nullable: false),
+                    RaterId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RatedUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RatingValue = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ratings", x => x.RatingId);
+                    table.ForeignKey(
+                        name: "FK_Ratings_AspNetUsers_RatedUserId",
+                        column: x => x.RatedUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Ratings_AspNetUsers_RaterId",
+                        column: x => x.RaterId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Ratings_Rides_RideId",
+                        column: x => x.RideId,
+                        principalTable: "Rides",
+                        principalColumn: "RideId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -204,6 +297,36 @@ namespace Pikmi.API.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_PassengerId",
+                table: "Bookings",
+                column: "PassengerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_RideId",
+                table: "Bookings",
+                column: "RideId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ratings_RatedUserId",
+                table: "Ratings",
+                column: "RatedUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ratings_RaterId",
+                table: "Ratings",
+                column: "RaterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ratings_RideId",
+                table: "Ratings",
+                column: "RideId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rides_DriverId",
+                table: "Rides",
+                column: "DriverId");
         }
 
         /// <inheritdoc />
@@ -225,7 +348,16 @@ namespace Pikmi.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Ratings");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Rides");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

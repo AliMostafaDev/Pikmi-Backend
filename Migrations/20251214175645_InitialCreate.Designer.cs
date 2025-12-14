@@ -12,7 +12,7 @@ using Pikmi.API.Data;
 namespace Pikmi.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250630192531_InitialCreate")]
+    [Migration("20251214175645_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Pikmi.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "8.0.19")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -169,6 +169,9 @@ namespace Pikmi.API.Migrations
                     b.Property<double>("AverageRating")
                         .HasColumnType("float");
 
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -185,18 +188,21 @@ namespace Pikmi.API.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Gender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsDocumentVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -256,6 +262,130 @@ namespace Pikmi.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Pikmi.API.Entities.Booking", b =>
+                {
+                    b.Property<int>("BookingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"));
+
+                    b.Property<DateTime>("BookedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CoinsUsed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RideId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatsBooked")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("BookingId");
+
+                    b.HasIndex("PassengerId");
+
+                    b.HasIndex("RideId");
+
+                    b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RatedUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RaterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RideId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("RatedUserId");
+
+                    b.HasIndex("RaterId");
+
+                    b.HasIndex("RideId");
+
+                    b.ToTable("Ratings");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Ride", b =>
+                {
+                    b.Property<int>("RideId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RideId"));
+
+                    b.Property<decimal>("CostInCoins")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FromLocation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SeatsAvailable")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ToLocation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("RideId");
+
+                    b.HasIndex("DriverId");
+
+                    b.ToTable("Rides");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -305,6 +435,81 @@ namespace Pikmi.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Booking", b =>
+                {
+                    b.HasOne("Pikmi.API.Entities.ApplicationUser", "Passenger")
+                        .WithMany("PassengerBookings")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pikmi.API.Entities.Ride", "Ride")
+                        .WithMany("Bookings")
+                        .HasForeignKey("RideId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Passenger");
+
+                    b.Navigation("Ride");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Rating", b =>
+                {
+                    b.HasOne("Pikmi.API.Entities.ApplicationUser", "RatedUser")
+                        .WithMany("ReceivedRatings")
+                        .HasForeignKey("RatedUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pikmi.API.Entities.ApplicationUser", "Rater")
+                        .WithMany("GivenRatings")
+                        .HasForeignKey("RaterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pikmi.API.Entities.Ride", "Ride")
+                        .WithMany("Ratings")
+                        .HasForeignKey("RideId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RatedUser");
+
+                    b.Navigation("Rater");
+
+                    b.Navigation("Ride");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Ride", b =>
+                {
+                    b.HasOne("Pikmi.API.Entities.ApplicationUser", "Driver")
+                        .WithMany("DriverRides")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("DriverRides");
+
+                    b.Navigation("GivenRatings");
+
+                    b.Navigation("PassengerBookings");
+
+                    b.Navigation("ReceivedRatings");
+                });
+
+            modelBuilder.Entity("Pikmi.API.Entities.Ride", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }
