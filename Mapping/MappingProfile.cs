@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Pikmi.API.DTOs.Admin;
 using Pikmi.API.DTOs.Balance;
 using Pikmi.API.DTOs.Booking;
 using Pikmi.API.DTOs.Identity;
@@ -18,6 +19,7 @@ namespace Pikmi.API.Mapping
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
 
+            // USER MAPPINGS
             CreateMap<ApplicationUser, UserDto>();
 
             CreateMap<CreateUserDto, ApplicationUser>()
@@ -30,7 +32,7 @@ namespace Pikmi.API.Mapping
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
 
 
-
+            // RIDE MAPPINGS
             CreateMap<CreateRideDto, Ride>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => "Active"))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
@@ -42,7 +44,7 @@ namespace Pikmi.API.Mapping
                 .ForMember(dest => dest.TotalBookings, opt => opt.MapFrom(src => src.Bookings.Count));
 
 
-
+            // BOOKING MAPPINGS
             CreateMap<CreateBookingDto, Booking>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => "Pending"))
                 .ForMember(dest => dest.BookedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
@@ -57,7 +59,7 @@ namespace Pikmi.API.Mapping
                 .ForMember(dest => dest.DriverId, opt => opt.MapFrom(src => src.Ride.DriverId));
 
 
-
+            // RATING MAPPINGS
             CreateMap<CreateRatingDto, Rating>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
 
@@ -67,10 +69,24 @@ namespace Pikmi.API.Mapping
                 .ForMember(dest => dest.RatedUserName, opt => opt.MapFrom(src => $"{src.RatedUser.FirstName} {src.RatedUser.LastName}"));
 
 
-
+            // WALLET MAPPINGS
             CreateMap<ApplicationUser, BalanceResponseDto>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+
+
+            // ADMIN MAPPINGS
+            CreateMap<CreateAdminDto, ApplicationUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(_ => true))
+                .ForMember(dest => dest.Balance, opt => opt.MapFrom(_ => 1000))
+                .ForMember(dest => dest.IsDocumentVerified, opt => opt.MapFrom(_ => true))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+
+            CreateMap<ApplicationUser, UserWithRolesDto>()
+                .ForMember(dest => dest.Roles, opt => opt.Ignore()); 
+
         }
     }
 }

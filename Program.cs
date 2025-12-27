@@ -45,6 +45,8 @@ builder.Services.AddScoped<IRideService, RideService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
