@@ -20,7 +20,9 @@ namespace Pikmi.API.Services.Implementations
 
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                .Where(u => u.Email != "superadmin@pikmi.com")
+                .ToListAsync();
             var userDtos = _mapper.Map<List<UserDto>>(users);
             return userDtos;
         }

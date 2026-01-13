@@ -78,14 +78,18 @@ namespace Pikmi.API.Repositories.Implementations
         {
             await _context.Rides.AddAsync(ride);
             await _context.SaveChangesAsync();
-            return ride;
+            return await _context.Rides
+                .Include(r => r.Driver)
+                .FirstAsync(r => r.RideId == ride.RideId);
         }
 
         public async Task<Ride> UpdateAsync(Ride ride)
         {
             _context.Rides.Update(ride);
             await _context.SaveChangesAsync();
-            return ride;
+            return await _context.Rides
+                .Include(r => r.Driver)
+                .FirstAsync(r => r.RideId == ride.RideId);
         }
 
         public async Task<bool> DeleteAsync(int rideId)

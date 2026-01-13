@@ -20,7 +20,9 @@ namespace Pikmi.API.Services.Implementations
 
         public async Task<IEnumerable<UserWithRolesDto>> GetAllUsersWithRolesAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                .Where(u => u.Email != "superadmin@pikmi.com")
+                .ToListAsync();
             var usersWithRoles = new List<UserWithRolesDto>();
 
             foreach (var user in users)

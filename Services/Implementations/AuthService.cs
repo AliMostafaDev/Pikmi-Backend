@@ -35,21 +35,55 @@ namespace Pikmi.API.Services.Implementations
             var user = _mapper.Map<ApplicationUser>(dto);
 
             var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                return result;
 
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "User");
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Confirm Your Email",
-                    $"Your email confirmation token is:<br><br><b>{WebUtility.HtmlEncode(token)}</b><br><br>Use this token to confirm your email.",
-                    isHtml: true);
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedUserId = WebUtility.UrlEncode(user.Id);
 
-            }
+            var confirmUrl =
+                $"http://localhost:3000/confirm-email?userId={encodedUserId}&token={encodedToken}";
+
+            var body = $@"
+                 <p>Welcome to our application 👋</p>
+                 <p>Please confirm your email address by clicking the link below:</p>
+                 <p>
+                     <a href=""{confirmUrl}"">Confirm Email</a>
+                 </p>
+                 <p>If you did not create this account, you can ignore this email.</p>
+             ";
+
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Confirm Your Email",
+                body,
+                isHtml: true
+            );
+
             return result;
+            //var user = _mapper.Map<ApplicationUser>(dto);
+
+            //var result = await _userManager.CreateAsync(user, dto.Password);
+
+            //if (result.Succeeded)
+            //{
+            //    await _userManager.AddToRoleAsync(user, "User");
+
+            //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            //    await _emailService.SendEmailAsync(
+            //        user.Email,
+            //        "Confirm Your Email",
+            //        $"Your email confirmation token is:<br><br><b>{WebUtility.HtmlEncode(token)}</b><br><br>Use this token to confirm your email.<br/>" +
+            //        $"http://localhost:/3000/reset-password?token={WebUtility.HtmlEncode(token)}@email={user.Email}",
+            //        isHtml: true);
+
+            //}
+            //return result;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto dto)
@@ -158,11 +192,38 @@ namespace Pikmi.API.Services.Implementations
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedUserId = WebUtility.UrlEncode(user.Id);
+
+            var confirmUrl =
+                $"http://localhost:3000/confirm-email?userId={encodedUserId}&token={encodedToken}";
+
+            var body = $@"
+                <p>Thank you for registering.</p>
+                <p>Please confirm your email address by clicking the link below:</p>
+                <p>
+                    <a href=""{confirmUrl}"">Confirm Email</a>
+                </p>
+                <p>If you did not create this account, you can safely ignore this email.</p>
+            ";
+
             return await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Confirm Your Email",
-                    $"Your email confirmation token is:<br><br><b>{WebUtility.HtmlEncode(token)}</b><br><br>Use this token to confirm your email.",
-                    isHtml: true);   
+                user.Email,
+                "Confirm Your Email",
+                body,
+                isHtml: true
+            );
+            //var user = await _userManager.FindByEmailAsync(email);
+            //if (user == null || user.EmailConfirmed)
+            //    return false;
+
+            //var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            //return await _emailService.SendEmailAsync(
+            //        user.Email,
+            //        "Confirm Your Email",
+            //        $"Your email confirmation token is:<br><br><b>{WebUtility.HtmlEncode(token)}</b><br><br>Use this token to confirm your email.",
+            //        isHtml: true);   
         }
 
         public async Task<bool> ForgotPasswordAsync(string email)
@@ -173,12 +234,27 @@ namespace Pikmi.API.Services.Implementations
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedEmail = WebUtility.UrlEncode(user.Email);
+
+            var resetUrl =
+                $"http://localhost:3000/reset-password?token={encodedToken}&email={encodedEmail}";
+
+            var body = $@"
+                 <p>You requested a password reset.</p>
+                 <p>Click the link below to reset your password:</p>
+                 <p>
+                     <a href=""{resetUrl}"">Reset Password</a>
+                 </p>
+                 <p>This link will expire soon.</p>
+             ";
+
             return await _emailService.SendEmailAsync(
-                email, 
-                "Reset Your Password", 
-                $"Here is you password reset token: <br><br>{WebUtility.HtmlEncode(token)}<br><br>Use it to reset your password via the application",
+                email,
+                "Reset Your Password",
+                body,
                 isHtml: true
-                );   
+            );
         }
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)

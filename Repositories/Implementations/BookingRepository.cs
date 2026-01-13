@@ -45,6 +45,7 @@ namespace Pikmi.API.Repositories.Implementations
         {
             return await _context.Bookings
                 .Include(b => b.Passenger)
+                .Include(b => b.Ride)
                 .Where(b => b.RideId == rideId)
                 .OrderBy(b => b.BookedAt)
                 .ToListAsync();

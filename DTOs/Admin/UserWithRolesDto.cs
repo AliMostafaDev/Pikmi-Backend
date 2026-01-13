@@ -11,6 +11,7 @@
         public decimal Balance { get; set; }
         public double AverageRating { get; set; }
         public bool IsDocumentVerified { get; set; }
+        public bool EmailConfirmed { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public IList<string> Roles { get; set; }

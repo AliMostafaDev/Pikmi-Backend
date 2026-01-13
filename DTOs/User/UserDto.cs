@@ -7,6 +7,8 @@
         public string LastName { get; set; }
         public string Gender { get; set; }
         public string Email { get; set; }
-        public string EmailConfirmed { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool IsDocumentVerified { get; set; }
+        public decimal Balance { get; set; }
     }
 }

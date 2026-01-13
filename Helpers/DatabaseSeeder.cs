@@ -68,6 +68,7 @@ namespace Pikmi.API.Helpers
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
+                await userManager.AddToRoleAsync(superAdmin, "Admin");
             }
 
         }
